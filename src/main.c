@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/25 13:51:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/28 15:33:30 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/28 15:48:58 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,20 +113,14 @@ bool	print_colrow(t_bstree *tree)
 	if (vec_new(&strings, sizeof(char*)) == -1)
 		return (false);
 	fill_entry_vector(&strings, &maxwidth, tree);
-//	for (size_t i = 0; i < strings.len; i++)
-//		printf("%-*s\n", (int)maxwidth, *(char**)vec_getref(&strings, i));
 	maxcols = strings.len > (size.ws_col / (maxwidth + 1)) ? size.ws_col / (maxwidth + 1) : strings.len;
 	maxrows = strings.len / maxcols + !!(strings.len % maxcols);
-	printf("AMOUNT OF ENTRIES: %ld | MAX WIDTH OF ENTRY: %ld\n", strings.len, maxwidth);
-	printf("WIDTH: %d | HEIGHT: %d\nCOLS: %ld | ROWS: %ld\n", size.ws_col, size.ws_row, maxcols, maxrows);
-
 	for (size_t i = 0; i < maxrows; i++)
 	{
 		for (size_t j = 0; j < maxcols && i + (j * maxrows) < strings.len; j++)
 			printf("%-*s", (int)maxwidth + 1, *(char**)vec_getref(&strings, i + (j * maxrows)));
 		printf("\n");
 	}
-
 	vec_destroy(&strings);
 	return (true);
 }
@@ -142,13 +136,11 @@ int		main(int argc, char **argv)
 	path = set_path(argc, argv);
 	//argument and flag handling..
 
-//	printf("row: %d | col: %d\n", size.ws_row, size.ws_col);
 	fd = opendir(path);
 	if (!fd)
 		return (1);
 	if (!get_directory_entries(&tree, fd))
 		return (1);
-//	print_entries(&tree);
 	print_colrow(&tree);
 	bstree_clear(&tree);
 	return (0);
