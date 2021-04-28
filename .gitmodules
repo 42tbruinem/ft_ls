@@ -1,0 +1,6 @@
+[submodule "lib/bst"]
+	path = lib/bst
+	url = https://github.com/Tishj/binary-search-tree-c.git
+[submodule "lib/vec"]
+	path = lib/vec
+	url = https://github.com/Tishj/vector_c.git
