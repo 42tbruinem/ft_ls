@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/25 13:51:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/28 13:45:55 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/28 15:33:30 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,11 @@ int		get_directory_entries(t_bstree *tree, DIR *fd)
 
 	while ((entry = readdir(fd)) && ret)
 	{
-		if (entry->d_type != DT_DIR)
-		{
-			length = strlen(entry->d_name);
-			if (bstree_insert(tree, entry->d_name, length + 1, (void*)length) == -1)
-				ret = 0;
-		}
+		length = strlen(entry->d_name);
+		if (length && entry->d_name[0] == '.')
+			continue ;
+		if (bstree_insert(tree, entry->d_name, length + 1, (void*)length) == -1)
+			ret = 0;
 	}
 	closedir(fd);
 	return (ret);
@@ -85,7 +84,7 @@ void	print_entries(t_bstree *tree)
 	}
 }
 
-void	fill_entry_vector(t_vec *vec, t_vec *lengths, t_bstree *tree)
+void	fill_entry_vector(t_vec *vec, size_t* maxwidth, t_bstree *tree)
 {
 	t_node	*node;
 	size_t	val;
@@ -95,28 +94,38 @@ void	fill_entry_vector(t_vec *vec, t_vec *lengths, t_bstree *tree)
 	{
 		val = (size_t)node->val;
 		vec_add(vec, &node->key, 1);
-		vec_add(lengths, &val, 1);
+		if (val > *maxwidth)
+			*maxwidth = val;
 		node = node_next(node);
 	}
 }
 
 bool	print_colrow(t_bstree *tree)
 {
-//	struct winsize	size;
+	struct winsize	size;
 	t_vec	strings;
-	t_vec	lengths;
+	size_t	maxwidth;
+	size_t	maxcols;
+	size_t	maxrows;
 
-//	size_t			rows = 1;
-
-//	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+	maxwidth = 1;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 	if (vec_new(&strings, sizeof(char*)) == -1)
 		return (false);
-	if (vec_new(&lengths, sizeof(size_t)) == -1)
-		return (false);
-	fill_entry_vector(&strings, &lengths, tree);
-	for (size_t i = 0; i < strings.len; i++)
-		printf("%s : %ld\n", *(char**)vec_getref(&strings, i), *(size_t*)vec_getref(&lengths, i));
+	fill_entry_vector(&strings, &maxwidth, tree);
+//	for (size_t i = 0; i < strings.len; i++)
+//		printf("%-*s\n", (int)maxwidth, *(char**)vec_getref(&strings, i));
+	maxcols = strings.len > (size.ws_col / (maxwidth + 1)) ? size.ws_col / (maxwidth + 1) : strings.len;
+	maxrows = strings.len / maxcols + !!(strings.len % maxcols);
+	printf("AMOUNT OF ENTRIES: %ld | MAX WIDTH OF ENTRY: %ld\n", strings.len, maxwidth);
+	printf("WIDTH: %d | HEIGHT: %d\nCOLS: %ld | ROWS: %ld\n", size.ws_col, size.ws_row, maxcols, maxrows);
 
+	for (size_t i = 0; i < maxrows; i++)
+	{
+		for (size_t j = 0; j < maxcols && i + (j * maxrows) < strings.len; j++)
+			printf("%-*s", (int)maxwidth + 1, *(char**)vec_getref(&strings, i + (j * maxrows)));
+		printf("\n");
+	}
 
 	vec_destroy(&strings);
 	return (true);
