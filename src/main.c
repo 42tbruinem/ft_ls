@@ -6,7 +6,7 @@
 /*   By: tbruinem <tbruinem@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/25 13:51:13 by tbruinem      #+#    #+#                 */
-/*   Updated: 2021/04/26 13:20:14 by tbruinem      ########   odam.nl         */
+/*   Updated: 2021/04/28 13:45:55 by tbruinem      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/sysmacros.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>

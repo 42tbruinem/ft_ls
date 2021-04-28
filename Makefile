@@ -6,7 +6,7 @@
 #    By: tbruinem <tbruinem@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/04/25 14:32:38 by tbruinem      #+#    #+#                  #
-#    Updated: 2021/04/26 13:07:59 by tbruinem      ########   odam.nl          #
+#    Updated: 2021/04/28 13:45:46 by tbruinem      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ all: $(NAME)
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) -o $@
+	$(CC) $(CFLAGS) -c $< $(CPPFLAGS) -o $@
 
 $(LIB):
 	@$(MAKE) -s -C $(LIBDIR)$@
